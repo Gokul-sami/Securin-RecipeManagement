@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Recipe Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .search-section {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .search-form label {
+            margin-right: 10px;
+        }
+        .results-section {
+            margin-top: 20px;
+        }
+        #recipeTable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        #recipeTable th, #recipeTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        #recipeTable th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Recipes</h1>
+    </header>
+    <main>
+        <section class="search-section">
+            <h2>Find Recipes</h2> 
+            <div class="search-form">
+                
+                <label>Title:</label>
+                <input type="text" id="title" placeholder="Recipe title">
+                <!-- <label>Prep Time (min):</label>
+                <input type="number" id="prepTime" placeholder="Max prep time">
+                <label>Cook Time (min):</label>
+                <input type="number" id="cookTime" placeholder="Max cook time"> -->
+                <label>Rating:</label>
+                <input type="number" id="rating" placeholder="8.2">
+                <button onclick="searchRecipes()">Search</button>
+                <button onclick="clearSearch()">Clear</button>
+            </div>
+        </section>
+        <section class="results-section">
+            <h2>Results</h2>
+            <div id="recipeResults">
+                <table id="recipeTable">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Cuisine</th>
+                            <th>Rating</th>
+                            <th>Total Time</th>
+                            <th>No. of People Serves</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recipeTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    <script>
+        function fetchAndDisplayRecipes(url) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('recipeTableBody');
+                    tableBody.innerHTML = '';
+                    data.forEach(recipe => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${recipe.title}</td>
+                            <td>${recipe.cuisine}</td>
+                            <td>${recipe.rating}</td>
+                            <td>${recipe.prep_time + recipe.cook_time}</td>
+                            <td>${recipe.serves}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                });
+        }
+
+        function searchRecipes() {
+            const title = document.getElementById('title').value;
+            const rating = document.getElementById('rating').value;
+            let url = '/api/recipes/search?';
+            if (title) {
+                url += `title=${title}&`;
+            }
+            if (rating) {
+                url += `rating=${rating}`;
+            }
+            fetchAndDisplayRecipes(url);
+        }
+
+        function clearSearch() {
+            document.getElementById('title').value = '';
+            document.getElementById('rating').value = '';
+            fetchAndDisplayRecipes('/api/recipes');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchAndDisplayRecipes('/api/recipes');
+        });
+    </script>
+</body>
+</html>
