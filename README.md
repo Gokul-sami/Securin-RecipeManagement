@@ -4,7 +4,7 @@ Import csv files in root folder to sql workbench before starting the server.
 
 Import only the attributes - id, title, continent, country_state, description, serves, cuisine, url, rating, total_time, prep_time, cook_timme.
 
-*SQL query to create table*
+**SQL query to create table**
 
 CREATE TABLE `recipes` (
   `id` int NOT NULL AUTO_INCREMENT,
